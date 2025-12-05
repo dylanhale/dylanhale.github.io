@@ -1,0 +1,419 @@
+window.PLAYLISTS = {
+  "11-27-25": [
+    {
+      "file": "001 - The Late Night Crew with Vance Goodman.m4a",
+      "title": "001 - The Late Night Crew with Vance Goodman"
+    },
+    {
+      "file": "002 - Mindy's Early Risers on WSQK.m4a",
+      "title": "002 - Mindy's Early Risers on WSQK"
+    },
+    {
+      "file": "009 - The Hawkins Homerun with Mindy Flare.m4a",
+      "title": "009 - The Hawkins Homerun with Mindy Flare"
+    },
+    {
+      "file": "010 - Dial-A-Dedication with Vance Goodman.m4a",
+      "title": "010 - Dial-A-Dedication with Vance Goodman"
+    },
+    {
+      "file": "011 - Evenings with Vance Goodman On WSQK.m4a",
+      "title": "011 - Evenings with Vance Goodman On WSQK"
+    },
+    {
+      "file": "012 - Late Nights with Mindy Flare on WSQK.m4a",
+      "title": "012 - Late Nights with Mindy Flare on WSQK"
+    }
+  ],
+  "11-28-25": [
+    {
+      "file": "001 - The Late Night Crew with Vance Goodman.m4a",
+      "title": "001 - The Late Night Crew with Vance Goodman"
+    },
+    {
+      "file": "002 - Mindy's Weekend Early Risers.m4a",
+      "title": "002 - Mindy's Weekend Early Risers"
+    },
+    {
+      "file": "003 - The WSQK Wake Up with Vance Goodman.m4a",
+      "title": "003 - The WSQK Wake Up with Vance Goodman"
+    },
+    {
+      "file": "004 - The Rewind At 9 With Mindy Flare On WSQK.m4a",
+      "title": "004 - The Rewind At 9 With Mindy Flare On WSQK"
+    },
+    {
+      "file": "005 - Mindy Flare in the Mornings.m4a",
+      "title": "005 - Mindy Flare in the Mornings"
+    },
+    {
+      "file": "006 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "006 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "007 - Talk To Tammy On WSQK The Squawk.m4a",
+      "title": "007 - Talk To Tammy On WSQK The Squawk"
+    },
+    {
+      "file": "008 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "008 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "009 - The Hawkins Homerun with Mindy Flare.m4a",
+      "title": "009 - The Hawkins Homerun with Mindy Flare"
+    },
+    {
+      "file": "010 - Dial-A-Dedication with Vance Goodman.m4a",
+      "title": "010 - Dial-A-Dedication with Vance Goodman"
+    },
+    {
+      "file": "011 - Evenings with Vance Goodman On WSQK.m4a",
+      "title": "011 - Evenings with Vance Goodman On WSQK"
+    },
+    {
+      "file": "012 - Late Nights with Mindy Flare on WSQK.m4a",
+      "title": "012 - Late Nights with Mindy Flare on WSQK"
+    }
+  ],
+  "11-29-25": [
+    {
+      "file": "001 - The Late Night Crew with Vance Goodman.m4a",
+      "title": "001 - The Late Night Crew with Vance Goodman"
+    },
+    {
+      "file": "002 - Mindy's Weekend Early Risers.m4a",
+      "title": "002 - Mindy's Weekend Early Risers"
+    },
+    {
+      "file": "003 - The Weekend Wake Up with Vance Goodman.m4a",
+      "title": "003 - The Weekend Wake Up with Vance Goodman"
+    },
+    {
+      "file": "004 - The Rewind At 9 With Mindy Flare On WSQK.m4a",
+      "title": "004 - The Rewind At 9 With Mindy Flare On WSQK"
+    },
+    {
+      "file": "005 - Mindy Flare in the Mornings.m4a",
+      "title": "005 - Mindy Flare in the Mornings"
+    },
+    {
+      "file": "006 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "006 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "007 - Weekend Homerun with Mindy Flare on WSQK.m4a",
+      "title": "007 - Weekend Homerun with Mindy Flare on WSQK"
+    },
+    {
+      "file": "008 - Dial-A-Dedication with Vance Goodman.m4a",
+      "title": "008 - Dial-A-Dedication with Vance Goodman"
+    },
+    {
+      "file": "009 - Evenings with Vance Goodman On WSQK.m4a",
+      "title": "009 - Evenings with Vance Goodman On WSQK"
+    },
+    {
+      "file": "010 - Late Nights with Mindy Flare on WSQK.m4a",
+      "title": "010 - Late Nights with Mindy Flare on WSQK"
+    }
+  ],
+  "11-30-25": [
+    {
+      "file": "001 - The Late Night Crew with Vance Goodman.m4a",
+      "title": "001 - The Late Night Crew with Vance Goodman"
+    },
+    {
+      "file": "002 - Mindy's Early Risers on WSQK.m4a",
+      "title": "002 - Mindy's Early Risers on WSQK"
+    },
+    {
+      "file": "003 - The Weekend Wake Up with Vance Goodman.m4a",
+      "title": "003 - The Weekend Wake Up with Vance Goodman"
+    },
+    {
+      "file": "004 - The Rewind At 9 With Mindy Flare On WSQK.m4a",
+      "title": "004 - The Rewind At 9 With Mindy Flare On WSQK"
+    },
+    {
+      "file": "005 - Mindy Flare in the Mornings.m4a",
+      "title": "005 - Mindy Flare in the Mornings"
+    },
+    {
+      "file": "006 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "006 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "007 - Weekend Homerun with Mindy Flare on WSQK.m4a",
+      "title": "007 - Weekend Homerun with Mindy Flare on WSQK"
+    },
+    {
+      "file": "008 - Dial-A-Dedication with Vance Goodman.m4a",
+      "title": "008 - Dial-A-Dedication with Vance Goodman"
+    },
+    {
+      "file": "009 - Evenings with Vance Goodman On WSQK.m4a",
+      "title": "009 - Evenings with Vance Goodman On WSQK"
+    },
+    {
+      "file": "010 - Late Nights with Mindy Flare on WSQK.m4a",
+      "title": "010 - Late Nights with Mindy Flare on WSQK"
+    }
+  ],
+  "12-1-25": [
+    {
+      "file": "001 - The Late Night Crew with Vance Goodman.m4a",
+      "title": "001 - The Late Night Crew with Vance Goodman"
+    },
+    {
+      "file": "002 - Mindy's Early Risers on WSQK.m4a",
+      "title": "002 - Mindy's Early Risers on WSQK"
+    },
+    {
+      "file": "003 - The WSQK Wake Up with Vance Goodman.m4a",
+      "title": "003 - The WSQK Wake Up with Vance Goodman"
+    },
+    {
+      "file": "004 - The Rewind At 9 With Mindy Flare On WSQK.m4a",
+      "title": "004 - The Rewind At 9 With Mindy Flare On WSQK"
+    },
+    {
+      "file": "005 - Mindy Flare in the Mornings.m4a",
+      "title": "005 - Mindy Flare in the Mornings"
+    },
+    {
+      "file": "006 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "006 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "007 - Talk To Tammy On WSQK The Squawk.m4a",
+      "title": "007 - Talk To Tammy On WSQK The Squawk"
+    },
+    {
+      "file": "008 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "008 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "009 - The Hawkins Homerun with Mindy Flare.m4a",
+      "title": "009 - The Hawkins Homerun with Mindy Flare"
+    },
+    {
+      "file": "010 - Dial-A-Dedication with Vance Goodman.m4a",
+      "title": "010 - Dial-A-Dedication with Vance Goodman"
+    },
+    {
+      "file": "011 - Evenings with Vance Goodman On WSQK.m4a",
+      "title": "011 - Evenings with Vance Goodman On WSQK"
+    },
+    {
+      "file": "012 - Late Nights with Mindy Flare on WSQK.m4a",
+      "title": "012 - Late Nights with Mindy Flare on WSQK"
+    }
+  ],
+  "12-2-25": [
+    {
+      "file": "001 - The Late Night Crew with Vance Goodman.m4a",
+      "title": "001 - The Late Night Crew with Vance Goodman"
+    },
+    {
+      "file": "002 - Mindy's Early Risers on WSQK.m4a",
+      "title": "002 - Mindy's Early Risers on WSQK"
+    },
+    {
+      "file": "003 - The WSQK Wake Up with Vance Goodman.m4a",
+      "title": "003 - The WSQK Wake Up with Vance Goodman"
+    },
+    {
+      "file": "004 - The Rewind At 9 With Mindy Flare On WSQK.m4a",
+      "title": "004 - The Rewind At 9 With Mindy Flare On WSQK"
+    },
+    {
+      "file": "005 - Mindy Flare in the Mornings.m4a",
+      "title": "005 - Mindy Flare in the Mornings"
+    },
+    {
+      "file": "006 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "006 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "007 - Talk To Tammy On WSQK The Squawk.m4a",
+      "title": "007 - Talk To Tammy On WSQK The Squawk"
+    },
+    {
+      "file": "008 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "008 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "009 - The Hawkins Homerun with Mindy Flare.m4a",
+      "title": "009 - The Hawkins Homerun with Mindy Flare"
+    },
+    {
+      "file": "010 - Dial-A-Dedication with Vance Goodman.m4a",
+      "title": "010 - Dial-A-Dedication with Vance Goodman"
+    },
+    {
+      "file": "011 - Evenings with Vance Goodman On WSQK.m4a",
+      "title": "011 - Evenings with Vance Goodman On WSQK"
+    },
+    {
+      "file": "012 - Late Nights with Mindy Flare on WSQK.m4a",
+      "title": "012 - Late Nights with Mindy Flare on WSQK"
+    }
+  ],
+  "12-3-25": [
+    {
+      "file": "001 - The Late Night Crew with Vance Goodman.m4a",
+      "title": "001 - The Late Night Crew with Vance Goodman"
+    },
+    {
+      "file": "002 - Mindy's Early Risers on WSQK.m4a",
+      "title": "002 - Mindy's Early Risers on WSQK"
+    },
+    {
+      "file": "003 - The WSQK Wake Up with Vance Goodman.m4a",
+      "title": "003 - The WSQK Wake Up with Vance Goodman"
+    },
+    {
+      "file": "004 - The Rewind At 9 With Mindy Flare On WSQK.m4a",
+      "title": "004 - The Rewind At 9 With Mindy Flare On WSQK"
+    },
+    {
+      "file": "005 - Mindy Flare in the Mornings.m4a",
+      "title": "005 - Mindy Flare in the Mornings"
+    },
+    {
+      "file": "006 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "006 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "007 - Talk To Tammy On WSQK The Squawk.m4a",
+      "title": "007 - Talk To Tammy On WSQK The Squawk"
+    },
+    {
+      "file": "008 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "008 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "009 - The Hawkins Homerun with Mindy Flare.m4a",
+      "title": "009 - The Hawkins Homerun with Mindy Flare"
+    },
+    {
+      "file": "010 - Dial-A-Dedication with Vance Goodman.m4a",
+      "title": "010 - Dial-A-Dedication with Vance Goodman"
+    },
+    {
+      "file": "011 - Evenings with Vance Goodman On WSQK.m4a",
+      "title": "011 - Evenings with Vance Goodman On WSQK"
+    },
+    {
+      "file": "012 - Late Nights with Mindy Flare on WSQK.m4a",
+      "title": "012 - Late Nights with Mindy Flare on WSQK"
+    }
+  ],
+  "12-4-25": [
+    {
+      "file": "001 - The Late Night Crew with Vance Goodman.m4a",
+      "title": "001 - The Late Night Crew with Vance Goodman"
+    },
+    {
+      "file": "002 - Mindy's Early Risers on WSQK.m4a",
+      "title": "002 - Mindy's Early Risers on WSQK"
+    },
+    {
+      "file": "003 - The WSQK Wake Up with Vance Goodman.m4a",
+      "title": "003 - The WSQK Wake Up with Vance Goodman"
+    },
+    {
+      "file": "004 - The Rewind At 9 With Mindy Flare On WSQK.m4a",
+      "title": "004 - The Rewind At 9 With Mindy Flare On WSQK"
+    },
+    {
+      "file": "005 - Mindy Flare in the Mornings.m4a",
+      "title": "005 - Mindy Flare in the Mornings"
+    },
+    {
+      "file": "006 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "006 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "007 - Talk To Tammy On WSQK The Squawk.m4a",
+      "title": "007 - Talk To Tammy On WSQK The Squawk"
+    },
+    {
+      "file": "008 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "008 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "009 - The Hawkins Homerun with Mindy Flare.m4a",
+      "title": "009 - The Hawkins Homerun with Mindy Flare"
+    },
+    {
+      "file": "010 - Dial-A-Dedication with Vance Goodman.m4a",
+      "title": "010 - Dial-A-Dedication with Vance Goodman"
+    },
+    {
+      "file": "011 - Evenings with Vance Goodman On WSQK.m4a",
+      "title": "011 - Evenings with Vance Goodman On WSQK"
+    },
+    {
+      "file": "012 - Late Nights with Mindy Flare on WSQK.m4a",
+      "title": "012 - Late Nights with Mindy Flare on WSQK"
+    }
+  ],
+  "12-5-25": [
+    {
+      "file": "003 - The WSQK Wake Up with Vance Goodman.m4a",
+      "title": "003 - The WSQK Wake Up with Vance Goodman"
+    },
+    {
+      "file": "004 - The Rewind At 9 With Mindy Flare On WSQK.m4a",
+      "title": "004 - The Rewind At 9 With Mindy Flare On WSQK"
+    },
+    {
+      "file": "005 - Mindy Flare in the Mornings..m4a",
+      "title": "005 - Mindy Flare in the Mornings."
+    },
+    {
+      "file": "006 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "006 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "007 - Talk To Tammy On WSQK The Squawk.m4a",
+      "title": "007 - Talk To Tammy On WSQK The Squawk"
+    },
+    {
+      "file": "008 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "008 - The Afternoon Hangout with Vance Goodman"
+    },
+    {
+      "file": "009 - The Hawkins Homerun with Mindy Flare.m4a",
+      "title": "009 - The Hawkins Homerun with Mindy Flare"
+    }
+  ],
+  "12-6-25": [],
+  "12-7-25": [],
+  "12-8-25": [],
+  "12-9-25": [],
+  "12-10-25": [],
+  "12-11-25": [],
+  "12-12-25": [],
+  "12-13-25": [],
+  "12-14-25": [],
+  "12-15-25": [],
+  "12-16-25": [],
+  "12-17-25": [],
+  "12-18-25": [],
+  "12-19-25": [],
+  "12-20-25": [],
+  "12-21-25": [],
+  "12-22-25": [],
+  "12-23-25": [],
+  "12-24-25": [],
+  "12-25-25": [],
+  "12-26-25": [],
+  "12-27-25": [],
+  "12-28-25": [],
+  "12-29-25": [],
+  "12-30-25": [],
+  "12-31-25": [],
+  "1-1-26": []
+};
