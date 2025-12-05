@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WSQK The Squawk</title>
+  <script src="./playlists.js"></script>
+  <style>
+    @font-face {
+      font-family: 'Ryga';
+      src: url('./WSQK/Fonts/RygaRegular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+      --bg: #0a0a12;
+      --panel: rgba(13, 16, 30, 0.9);
+      --card: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --primary: #930006;
+      --accent: #ff3b8a;
+      --text: #e21617;
+      --muted: #9aa0b5;
+      --shadow: 0 28px 90px rgba(0, 0, 0, 0.65);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Ryga', 'Manrope', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: transparent;
+      padding: 32px 22px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .bg-video {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 15% 10%, rgba(147,0,0,0.55), transparent 35%),
+                  radial-gradient(circle at 85% 10%, rgba(147,0,0,0.4), transparent 40%),
+                  linear-gradient(145deg, rgba(0,0,0,0.55), rgba(0,0,0,0.65));
+      z-index: 0;
+      pointer-events: none;
+    }
+    #app { width: min(1200px, 98vw); }
+    .shell {
+      background: rgba(13, 16, 30, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow:
+        0 30px 90px rgba(0, 0, 0, 0.75),
+        0 0 46px rgba(147, 0, 6, 0.4),
+        0 0 82px rgba(147, 0, 6, 0.25);
+      border-radius: 24px;
+      padding: 240px 34px 34px;
+      backdrop-filter: blur(14px);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .shell::before, .shell::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      animation: pulseA 5.5s ease-in-out infinite alternate;
+    }
+    .shell::before {
+      inset: -35% -35% auto -35%;
+      height: 75%;
+      background: radial-gradient(ellipse at 20% 30%, rgba(147, 0, 6, 0.28), transparent 55%);
+      animation-delay: -2s;
+    }
+    .shell::after {
+      inset: auto -35% -35% -35%;
+      height: 85%;
+      background: radial-gradient(ellipse at 80% 70%, rgba(147, 0, 6, 0.22), transparent 60%);
+      animation: pulseB 6.5s ease-in-out infinite alternate;
+      animation-delay: -3s;
+    }
+    .logo {
+      position: absolute;
+      top: 10px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      padding: 8px 0;
+      pointer-events: none;
+      transform: scale(1.2);
+      z-index: 2;
+    }
+    .logo::after {
+      content: "";
+      position: absolute;
+      inset: -16px -22px;
+      background: radial-gradient(circle, rgba(147,0,0,0.35) 0%, transparent 60%);
+      filter: blur(22px);
+      z-index: 0;
+      animation: flicker 6s ease-in-out infinite alternate;
+    }
+    .logo img {
+      position: relative;
+      z-index: 1;
+      width: 475px;
+      height: auto;
+      max-width: none;
+      filter:
+        drop-shadow(0 0 18px rgba(147,0,0,0.55))
+        drop-shadow(0 0 28px rgba(147,0,0,0.4))
+        drop-shadow(0 0 38px rgba(147,0,0,0.3));
+      display: block;
+      margin: 0 auto;
+      animation: flickerSoft 8s ease-in-out infinite alternate;
+    }
+    .hero {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .eyebrow {
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      margin: 0 0 8px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 5vw, 36px);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-shadow:
+        0 0 18px rgba(147,0,6,0.6),
+        0 0 32px rgba(147,0,6,0.35);
+    }
+    h2, h3, button, input, select, .title-lg {
+      font-family: 'Ryga', 'Manrope', system-ui, -apple-system, sans-serif;
+    }
+    .muted { color: var(--muted); }
+    .selector {
+      min-width: 260px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      padding: 16px;
+      border-radius: var(--radius);
+    }
+    label {
+      font-size: 13px;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 8px;
+    }
+    select {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: 'Ryga', 'Manrope', system-ui, -apple-system, sans-serif;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+    @media (max-width: 900px) {
+      body { padding: 18px; }
+      .shell { padding: 18px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 20% 20%, rgba(147, 0, 6, 0.12), transparent 45%);
+      animation: pulseCard 8s ease-in-out infinite alternate;
+      animation-delay: -1.5s;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: rgba(147,0,6,0.18);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--text);
+    }
+    .pill span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: inline-block;
+      box-shadow: 0 0 12px rgba(147, 0, 6, 0.8);
+    }
+    .pill .status-light {
+      background: transparent;
+      box-shadow: none;
+    }
+    .status-light {
+      width: 10px;
+      height: 10px;
+    }
+    .status-on {
+      background: #ff3b3b;
+      animation: liveBlink 1s ease-in-out infinite;
+      box-shadow:
+        0 0 10px rgba(255, 59, 59, 0.9),
+        0 0 18px rgba(147, 0, 6, 0.5);
+    }
+    .status-off {
+      background: #6f7485;
+      box-shadow:
+        inset 0 0 4px rgba(0, 0, 0, 0.35),
+        0 0 4px rgba(0, 0, 0, 0.25);
+    }
+    .pill span.status-light.status-on {
+      background: #ff3b3b;
+      box-shadow:
+        0 0 10px rgba(255, 59, 59, 0.9),
+        0 0 18px rgba(147, 0, 6, 0.5);
+    }
+    .pill span.status-light.status-off {
+      background: #6f7485;
+      box-shadow:
+        inset 0 0 4px rgba(0, 0, 0, 0.35),
+        0 0 4px rgba(0, 0, 0, 0.25);
+    }
+    .title-lg { margin: 10px 0 8px; font-size: 24px; }
+    .progress {
+      width: 100%;
+      height: 10px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      margin: 18px 0 6px;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow:
+        inset 0 0 18px rgba(0,0,0,0.35),
+        0 0 16px rgba(147,0,6,0.35);
+      overflow: hidden;
+    }
+    .progress-inner {
+      height: 100%;
+      background: linear-gradient(90deg, rgba(147,0,6,0.9), rgba(255,59,138,0.7));
+      border-radius: 999px;
+      width: 0%;
+      position: relative;
+      transition: width 0.12s ease;
+      box-shadow:
+        0 0 12px rgba(147,0,6,0.75),
+        0 0 20px rgba(147,0,6,0.4);
+      animation: barPulse 6s ease-in-out infinite alternate;
+    }
+    .progress-inner::after {
+      content: "";
+      position: absolute;
+      right: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    button {
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+      box-shadow: 0 0 16px rgba(147,0,6,0.35);
+    }
+    button:hover:not(:disabled) {
+      border-color: rgba(255,255,255,0.32);
+      transform: translateY(-1px);
+      box-shadow:
+        0 8px 22px rgba(0,0,0,0.35),
+        0 0 18px rgba(147,0,6,0.45);
+      background: rgba(147,0,6,0.18);
+    }
+    button:disabled { opacity: 0.55; cursor: not-allowed; }
+    .ghost {
+      background: transparent;
+      border-style: dashed;
+      box-shadow: 0 0 12px rgba(147,0,6,0.25);
+    }
+    .primary {
+      background: linear-gradient(135deg, rgba(147,0,6,0.95), rgba(255,59,138,0.75));
+      border: none;
+      color: #0b1221;
+      font-weight: 700;
+      padding: 12px 16px;
+      flex: 1;
+      box-shadow:
+        0 10px 30px rgba(147,0,6,0.45),
+        0 0 22px rgba(147,0,6,0.6);
+    }
+    .playlist {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 360px;
+      overflow: auto;
+      padding-right: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(147,0,6,0.6) rgba(255,255,255,0.08);
+    }
+    .playlist::-webkit-scrollbar { width: 10px; }
+    .playlist::-webkit-scrollbar-track { background: rgba(255,255,255,0.08); border-radius: 10px; }
+    .playlist::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(147,0,6,0.9), rgba(255,59,138,0.7));
+      border-radius: 10px;
+      box-shadow: 0 0 14px rgba(147,0,6,0.55);
+    }
+    .track {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      transition: border-color 0.12s ease, background 0.12s ease;
+      box-shadow: 0 0 12px rgba(147,0,6,0.22);
+    }
+    .track:hover { border-color: var(--card-border); }
+    .track.active {
+      border-color: rgba(255,255,255,0.3);
+      background: rgba(147, 0, 6, 0.18);
+      box-shadow:
+        0 8px 20px rgba(0,0,0,0.25),
+        0 0 18px rgba(147,0,6,0.35);
+    }
+    .badge {
+      min-width: 110px;
+      height: 24px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(147,0,6,0.34), rgba(255,59,138,0.28));
+      border: 1px solid rgba(255,255,255,0.25);
+      font-weight: 700;
+      color: #fefefe;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      text-shadow:
+        0 0 10px rgba(147,0,6,0.65),
+        0 0 18px rgba(147,0,6,0.35);
+      box-shadow: 0 0 16px rgba(147,0,6,0.35);
+    }
+    .tiny {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0;
+    }
+    .flex-between { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+
+    @keyframes pulseA {
+      0% { opacity: 0.55; transform: translate(-8px, -6px) scale(1); filter: blur(18px); }
+      50% { opacity: 1; transform: translate(10px, 6px) scale(1.08); }
+      100% { opacity: 0.7; transform: translate(4px, -2px) scale(1.04); }
+    }
+    @keyframes pulseB {
+      0% { opacity: 0.5; transform: translate(6px, 8px) scale(1); filter: blur(22px); }
+      50% { opacity: 1; transform: translate(-8px, -6px) scale(1.08); }
+      100% { opacity: 0.65; transform: translate(3px, 4px) scale(1.04); }
+    }
+    @keyframes pulseCard {
+      0% { opacity: 0.65; transform: translate(-6px, -3px) scale(1); }
+      50% { opacity: 1; transform: translate(4px, 6px) scale(1.03); }
+      100% { opacity: 0.7; transform: translate(-3px, 3px) scale(1.015); }
+    }
+    @keyframes flicker {
+      0% { opacity: 0.55; transform: scale(1); }
+      35% { opacity: 0.95; transform: scale(1.02); }
+      60% { opacity: 0.7; transform: scale(1.01); }
+      100% { opacity: 0.9; transform: scale(1.03); }
+    }
+    @keyframes flickerSoft {
+      0% { filter: drop-shadow(0 0 12px rgba(147,0,0,0.45)) drop-shadow(0 0 22px rgba(147,0,0,0.35)); opacity: 0.9; }
+      50% { filter: drop-shadow(0 0 20px rgba(147,0,0,0.7)) drop-shadow(0 0 30px rgba(147,0,0,0.45)); opacity: 1; }
+      100% { filter: drop-shadow(0 0 14px rgba(147,0,0,0.5)) drop-shadow(0 0 26px rgba(147,0,0,0.4)); opacity: 0.95; }
+    }
+    @keyframes barPulse {
+      0% { filter: drop-shadow(0 0 8px rgba(147,0,6,0.5)); }
+      50% { filter: drop-shadow(0 0 18px rgba(147,0,6,0.8)); }
+      100% { filter: drop-shadow(0 0 12px rgba(147,0,6,0.6)); }
+    }
+    @keyframes liveBlink {
+      0% { opacity: 0.65; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.15); }
+      100% { opacity: 0.65; transform: scale(1); }
+    }
+  </style>
+</head>
+  <body oncontextmenu="return false;">
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="./BackgroundVideo.mp4" type="video/mp4" />
+  </video>
+  <div class="bg-overlay"></div>
+  <div id="app"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script type="text/babel">
+    document.addEventListener("contextmenu", (e) => e.preventDefault(), { passive: true });
+    document.addEventListener("dragstart", (e) => e.preventDefault(), { passive: true });
+
+    const { useEffect, useMemo, useRef, useState } = React;
+
+    const dateOptions = [
+      { label: "11/27", folder: "11-27-25" },
+      { label: "11/28", folder: "11-28-25" },
+      { label: "11/29", folder: "11-29-25" },
+      { label: "11/30", folder: "11-30-25" },
+      { label: "12/01", folder: "12-1-25" },
+      { label: "12/02", folder: "12-2-25" },
+      { label: "12/03", folder: "12-3-25" },
+      { label: "12/04", folder: "12-4-25" },
+    ];
+
+    const manifestUrl = "./playlists.json";
+    const preloadManifest = window.PLAYLISTS || null;
+    const emptyManifest = dateOptions.reduce((acc, { folder }) => {
+      acc[folder] = [];
+      return acc;
+    }, {});
+
+    const isoFromFolder = (folder) => {
+      const [m, d, y] = folder.split("-");
+      return `20${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    };
+    const folderFromISO = (iso) => {
+      const [y, m, d] = iso.split("-");
+      return `${parseInt(m, 10)}-${parseInt(d, 10)}-${y.slice(-2)}`;
+    };
+    const labelFromISO = (iso) => {
+      const [y, m, d] = iso.split("-");
+      return `${String(m).padStart(2, "0")}/${String(d).padStart(2, "0")}`;
+    };
+
+    const weekendFolders = new Set(["11-29-25", "11-30-25"]);
+
+    const weekdaySlots = [
+      { num: "001", label: "12a-3a", startMin: 0, endMin: 180 },
+      { num: "002", label: "3a-6a", startMin: 180, endMin: 360 },
+      { num: "003", label: "6a-9a", startMin: 360, endMin: 540 },
+      { num: "004", label: "9a-10a", startMin: 540, endMin: 600 },
+      { num: "005", label: "10a-12p", startMin: 600, endMin: 720 },
+      { num: "006", label: "12p-1p", startMin: 720, endMin: 780 },
+      { num: "007", label: "1p-2p", startMin: 780, endMin: 840 },
+      { num: "008", label: "2p-4p", startMin: 840, endMin: 960 },
+      { num: "009", label: "4p-7p", startMin: 960, endMin: 1140 },
+      { num: "010", label: "7p-8p", startMin: 1140, endMin: 1200 },
+      { num: "011", label: "8p-9p", startMin: 1200, endMin: 1260 },
+      { num: "012", label: "9p-12a", startMin: 1260, endMin: 1440 },
+    ];
+
+    const weekendSlots = [
+      { num: "001", label: "12a-3a", startMin: 0, endMin: 180 },
+      { num: "002", label: "3a-6a", startMin: 180, endMin: 360 },
+      { num: "003", label: "6a-9a", startMin: 360, endMin: 540 },
+      { num: "004", label: "9a-10a", startMin: 540, endMin: 600 },
+      { num: "005", label: "10a-12p", startMin: 600, endMin: 720 },
+      { num: "006", label: "12p-4p", startMin: 720, endMin: 960 },
+      { num: "007", label: "4p-7p", startMin: 960, endMin: 1140 },
+      { num: "008", label: "7p-8p", startMin: 1140, endMin: 1200 },
+      { num: "009", label: "8p-9p", startMin: 1200, endMin: 1260 },
+      { num: "010", label: "9p-12a", startMin: 1260, endMin: 1440 },
+    ];
+
+    const stripTitle = (name) => (name || "").replace(/^\d+\s*[-.]?\s*/, "").trim();
+    const extractNum = (name) => {
+      const m = /^(\d{3})/.exec(name || "");
+      if (m) return m[1];
+      const m2 = /^(\d+)/.exec(name || "");
+      return m2 ? m2[1].padStart(3, "0") : null;
+    };
+    const minutesToLabel = (mins) => {
+      const h = Math.floor(mins / 60) % 24;
+      const m = Math.floor(mins % 60);
+      const suffix = h >= 12 ? "p" : "a";
+      const hour12 = h % 12 === 0 ? 12 : h % 12;
+      return `${hour12}:${String(m).padStart(2, "0")}${suffix}m`;
+    };
+    const expandLabel = (label) => label.replace(/a\b/g, "am").replace(/p\b/g, "pm").replace("-", " to ");
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const ordinal = (day) => {
+      const mod10 = day % 10;
+      const mod100 = day % 100;
+      if (mod10 === 1 && mod100 !== 11) return `${day}st`;
+      if (mod10 === 2 && mod100 !== 12) return `${day}nd`;
+      if (mod10 === 3 && mod100 !== 13) return `${day}rd`;
+      return `${day}th`;
+    };
+    const formatDayMonth = (folder) => {
+      const [year, month, day] = isoFromFolder(folder).split("-");
+      const dayNum = parseInt(day, 10);
+      const monthIdx = Math.max(0, Math.min(11, parseInt(month, 10) - 1));
+      return `${ordinal(dayNum)} of ${monthNames[monthIdx]}`;
+    };
+    const formatClockFromSeconds = (totalSeconds) => {
+      const total = Math.max(0, Math.floor(totalSeconds || 0));
+      const h = Math.floor(total / 3600) % 24;
+      const m = Math.floor((total % 3600) / 60);
+      const s = total % 60;
+      const suffix = h >= 12 ? "PM" : "AM";
+      const hour12 = h % 12 === 0 ? 12 : h % 12;
+      return `${String(hour12).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")} ${suffix}`;
+    };
+
+    function useManifest() {
+      const [state, setState] = useState({
+        status: preloadManifest ? "ready" : "loading",
+        manifest: preloadManifest ? { ...emptyManifest, ...preloadManifest } : emptyManifest,
+      });
+
+      useEffect(() => {
+        if (preloadManifest) return;
+        let alive = true;
+        fetch(manifestUrl)
+          .then((res) => {
+            if (!res.ok) throw new Error("Missing playlists.json in project root");
+            return res.json();
+          })
+          .then((json) => {
+            if (!alive) return;
+            setState({ status: "ready", manifest: { ...emptyManifest, ...json } });
+          })
+          .catch(() => {
+            if (alive) setState({ status: "error", manifest: emptyManifest });
+          });
+        return () => { alive = false; };
+      }, []);
+
+      return state;
+    }
+
+    function App() {
+      const { status, manifest } = useManifest();
+      const [selected, setSelected] = useState(dateOptions[0]);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [isPlaying, setIsPlaying] = useState(false);
+      const [progress, setProgress] = useState(0);
+      const [elapsed, setElapsed] = useState("00:00:00");
+      const audioARef = useRef(null);
+      const audioBRef = useRef(null);
+      const [activeKey, setActiveKey] = useState("A");
+      const queuedNextRef = useRef(null);
+      const pendingIndexRef = useRef(null);
+      const preloadedKeyRef = useRef(null);
+      const switchingRef = useRef(false);
+      const friendlyDayLabel = useMemo(() => formatDayMonth(selected.folder), [selected.folder]);
+
+      const isWeekend = weekendFolders.has(selected.folder);
+      const schedule = useMemo(() => (isWeekend ? weekendSlots : weekdaySlots), [isWeekend]);
+
+      const playlist = manifest[selected.folder] || [];
+      const currentTrack = playlist[currentIndex] || null;
+
+      const currentSlot = useMemo(() => {
+        if (!currentTrack) return null;
+        const num = extractNum(currentTrack.file || currentTrack.title);
+        return schedule.find((s) => s.num === num) || schedule[currentIndex] || null;
+      }, [currentTrack, schedule, currentIndex]);
+      useEffect(() => {
+        if (currentSlot) {
+          const absoluteSeconds = currentSlot.startMin * 60;
+          setElapsed(formatClockFromSeconds(absoluteSeconds));
+        }
+      }, [currentSlot]);
+
+      useEffect(() => {
+        setCurrentIndex(0);
+        setIsPlaying(false);
+        setProgress(0);
+        if (pendingIndexRef.current !== null) {
+          setCurrentIndex(pendingIndexRef.current);
+          setIsPlaying(true);
+          pendingIndexRef.current = null;
+        }
+      }, [selected.folder, playlist.length]);
+
+      const computeNextTarget = () => {
+        if (currentIndex + 1 < playlist.length) {
+          return { day: selected, index: currentIndex + 1 };
+        }
+        const dayIdx = dateOptions.findIndex((d) => d.folder === selected.folder);
+        for (let offset = 1; offset <= dateOptions.length; offset++) {
+          const nextDay = dateOptions[(dayIdx + offset) % dateOptions.length];
+          const tracks = manifest[nextDay.folder] || [];
+          if (tracks.length > 0) return { day: nextDay, index: 0 };
+        }
+        return null;
+      };
+
+      const getActiveAudio = () => (activeKey === "A" ? audioARef.current : audioBRef.current);
+      const getIdleAudio = () => (activeKey === "A" ? audioBRef.current : audioARef.current);
+
+      useEffect(() => {
+        setCurrentIndex(0);
+        setIsPlaying(false);
+        setProgress(0);
+        setElapsed("00:00:00");
+        queuedNextRef.current = null;
+        if (pendingIndexRef.current !== null) {
+          setCurrentIndex(pendingIndexRef.current);
+          setIsPlaying(true);
+          pendingIndexRef.current = null;
+        }
+      }, [selected.folder, playlist.length]);
+
+      const loadTrackInto = (audio, target) => {
+        if (!audio) return false;
+        const tracks = manifest[target.day.folder] || [];
+        const track = tracks[target.index];
+        if (!track) return false;
+        const src = `Audio Files/${target.day.folder}/${track.file}`;
+        const normalizedSrc = new URL(src, window.location.href).href;
+        if (audio.src !== normalizedSrc) {
+          audio.src = src;
+          audio.load();
+        }
+        return true;
+      };
+
+      const queueNext = (target) => {
+        queuedNextRef.current = target;
+        const idle = getIdleAudio();
+        if (idle && target) {
+          loadTrackInto(idle, target);
+          idle.pause();
+          idle.currentTime = 0;
+          idle.volume = 1;
+          preloadedKeyRef.current = activeKey === "A" ? "B" : "A";
+        }
+      };
+
+      const finalizeTarget = (target) => {
+        if (target.day.folder !== selected.folder) {
+          pendingIndexRef.current = target.index;
+          setSelected(target.day);
+        } else {
+          setCurrentIndex(target.index);
+        }
+        setIsPlaying(true);
+      };
+
+      const startNext = (target) => {
+        if (!target || switchingRef.current) return;
+        switchingRef.current = true;
+        const active = getActiveAudio();
+        const idle = getIdleAudio();
+        const preloadKey = preloadedKeyRef.current;
+        if (idle && preloadKey === (activeKey === "A" ? "B" : "A")) {
+          loadTrackInto(idle, target);
+          if (active) active.pause();
+          idle.currentTime = 0;
+          idle.play().catch(() => {});
+          setActiveKey(activeKey === "A" ? "B" : "A");
+        } else {
+          if (active) {
+            active.pause();
+            loadTrackInto(active, target);
+            active.currentTime = 0;
+            active.play().catch(() => {});
+          }
+        }
+        queuedNextRef.current = null;
+        preloadedKeyRef.current = null;
+        finalizeTarget(target);
+        switchingRef.current = false;
+      };
+
+      useEffect(() => {
+        const audio = getActiveAudio();
+        if (!audio || !currentSlot) return;
+        const slotDurationSec = (currentSlot.endMin - currentSlot.startMin) * 60;
+
+        const onTime = () => {
+          const ratio = slotDurationSec ? Math.min(audio.currentTime / slotDurationSec, 1) : 0;
+          setProgress(ratio);
+          if (currentSlot) {
+            const slotElapsed = audio.currentTime;
+            const absoluteSeconds = currentSlot.startMin * 60 + slotElapsed;
+            setElapsed(formatClockFromSeconds(absoluteSeconds));
+          }
+          const remainingSlot = slotDurationSec - audio.currentTime;
+          const remainingAudio = Number.isFinite(audio.duration) ? (audio.duration - audio.currentTime) : remainingSlot;
+          if (remainingSlot <= 90 && !queuedNextRef.current) {
+            const next = computeNextTarget();
+            if (next) queueNext(next);
+          }
+          // Preload in final 20s
+          if (remainingAudio <= 20 && !queuedNextRef.current) {
+            const next = computeNextTarget();
+            if (next) queueNext(next);
+          }
+          const target = queuedNextRef.current || computeNextTarget();
+          if (target && remainingAudio <= 0.5) {
+            startNext(target);
+          }
+          if (remainingSlot > 120) {
+            queuedNextRef.current = null;
+          }
+        };
+
+        const onEnded = () => {
+          const target = queuedNextRef.current || computeNextTarget();
+          if (target) {
+            startNext(target);
+          } else {
+            setIsPlaying(false);
+          }
+        };
+
+        audio.addEventListener("timeupdate", onTime);
+        audio.addEventListener("ended", onEnded);
+        return () => {
+          audio.removeEventListener("timeupdate", onTime);
+          audio.removeEventListener("ended", onEnded);
+        };
+      }, [currentSlot, currentIndex, playlist, activeKey]);
+
+      useEffect(() => {
+        const audio = getActiveAudio();
+        const track = playlist[currentIndex];
+        if (!audio || !track) return;
+        const src = `Audio Files/${selected.folder}/${track.file}`;
+        const normalizedSrc = new URL(src, window.location.href).href;
+        if (audio.src !== normalizedSrc) {
+          audio.src = src;
+          audio.load();
+        }
+        audio.volume = 1;
+        setProgress(0);
+        if (currentSlot) {
+          const absoluteSeconds = currentSlot.startMin * 60;
+          setElapsed(formatClockFromSeconds(absoluteSeconds));
+        } else {
+          setElapsed("00:00:00");
+        }
+        if (isPlaying) {
+          audio.play().catch(() => setIsPlaying(false));
+        }
+        // reset preload indicator
+        preloadedKeyRef.current = null;
+      }, [currentIndex, playlist, selected, isPlaying, currentSlot]);
+
+      const hasTracks = playlist.length > 0;
+
+      const handlePlayPause = () => {
+        const audio = getActiveAudio();
+        if (!audio || !currentTrack) return;
+        if (isPlaying) {
+          audio.pause();
+          setIsPlaying(false);
+        } else {
+          audio.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+        }
+      };
+
+      const handleNext = () => {
+        const target = computeNextTarget();
+        if (target) startNext(target, true);
+      };
+
+      const handlePrev = () => {
+        if (!hasTracks) return;
+        setCurrentIndex((idx) => (idx - 1 + playlist.length) % playlist.length);
+      };
+
+      const handleSeek = (e) => {
+        if (!currentSlot) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        const ratio = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+        const slotDurationSec = (currentSlot.endMin - currentSlot.startMin) * 60;
+        const targetSec = ratio * slotDurationSec;
+        const audio = getActiveAudio();
+        if (audio) {
+          const safeTarget = audio.duration ? Math.min(targetSec, Math.max(audio.duration - 0.25, 0)) : targetSec;
+          audio.currentTime = Math.max(0, safeTarget);
+          audio.play().catch(() => {});
+          setIsPlaying(true);
+        }
+      };
+
+      return (
+        <div className="shell">
+          <div className="logo">
+            <img src="./logo.png" alt="WSQK"/>
+          </div>
+          <div className="hero">
+            <div>
+              <h1>WSQK The Squawk</h1>
+              <p className="eyebrow">Hawkins Radio Station</p>
+            </div>
+            <div className="selector">
+              <label htmlFor="day">Day</label>
+              <input
+                id="day"
+                type="date"
+                min="2025-11-01"
+                max="2025-12-31"
+                value={isoFromFolder(selected.folder)}
+                onChange={(e) => {
+                  const iso = e.target.value;
+                  if (!iso) return;
+                  const folder = folderFromISO(iso);
+                  const label = labelFromISO(iso);
+                  setSelected({ folder, label });
+                }}
+                style={{
+                  width: "100%",
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid var(--card-border)",
+                  color: "var(--text)",
+                  padding: "12px",
+                  borderRadius: "12px",
+                  fontSize: "15px",
+                  fontFamily: "'Ryga','Manrope',system-ui,-apple-system,sans-serif"
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="grid">
+            <div className="card">
+              <div className="pill">
+                <span className={`status-light ${isPlaying ? "status-on" : "status-off"}`}></span>
+                {isPlaying ? "On Air" : "Off Air"}
+              </div>
+              <h2 className="title-lg">{currentTrack ? stripTitle(currentTrack.title || currentTrack.file) : "Add .m4a files to start"}</h2>
+              <p className="muted">
+                {hasTracks
+                  ? `${currentSlot ? expandLabel(currentSlot.label) : ""}`
+                  : "Drop numbered files into the folder then refresh the manifest."}
+              </p>
+              <div className="tiny" style={{ textAlign: "right", marginBottom: 4 }}>{elapsed}</div>
+              <div className="progress" onClick={handleSeek}>
+                <div className="progress-inner" style={{ width: `${progress * 100}%` }}></div>
+              </div>
+              <div className="flex-between tiny" style={{ marginTop: 4, fontSize: 12 }}>
+                <span>{currentSlot ? minutesToLabel(currentSlot.startMin) : "--:--"}</span>
+                <span>{currentSlot ? minutesToLabel(currentSlot.endMin) : "--:--"}</span>
+              </div>
+              <div className="controls">
+                <button className="ghost" onClick={handlePrev} disabled={!hasTracks}>&lt; Prev</button>
+                <button className="primary" onClick={handlePlayPause} disabled={!hasTracks}>
+                  {isPlaying ? "Pause" : "Play"}
+                </button>
+                <button className="ghost" onClick={handleNext} disabled={!hasTracks}>Next &gt;</button>
+              </div>
+              <audio ref={audioARef} />
+              <audio ref={audioBRef} />
+            </div>
+
+            <div className="card">
+              <div className="flex-between">
+                <div>
+                  <div className="pill" style={{ marginBottom: 10 }}><span></span> Schedule</div>
+                  <h3 style={{ margin: 0 }}>Timeslots on the {friendlyDayLabel}</h3>
+                </div>
+                <div className="tiny">{playlist.length} item{playlist.length === 1 ? "" : "s"}</div>
+              </div>
+              <div className="playlist">
+                {playlist.length === 0 && (
+                  <div className="muted">No timeslots found for this day.</div>
+                )}
+                {playlist.map((track, idx) => {
+                  const match = /^(\d+)/.exec(track.file);
+                  const num = match ? match[1].padStart(3, "0") : String(idx + 1).padStart(3, "0");
+                  const slot = schedule.find((s) => s.num === num) || schedule[idx];
+                  return (
+                    <div
+                      key={track.file}
+                      className={"track " + (idx === currentIndex ? "active" : "")}
+                      onClick={() => {
+                        setCurrentIndex(idx);
+                        setIsPlaying(true);
+                      }}
+                    >
+                      <div className="badge">{slot ? expandLabel(slot.label) : num}</div>
+                      <div>
+                        <div>{stripTitle(track.title || track.file)}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("app")).render(<App />);
+  </script>
+</body>
+</html>
