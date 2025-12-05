@@ -44,8 +44,19 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      z-index: -1;
+      z-index: -3;
       pointer-events: none;
+    }
+    .bg-image {
+      position: fixed;
+      inset: 0;
+      background-image: url('./Background.png');
+      background-size: cover;
+      background-position: center;
+      mix-blend-mode: overlay;
+      opacity: 1; /* 90% transparent */
+      pointer-events: none;
+      z-index: -2;
     }
     .bg-overlay {
       position: fixed;
@@ -68,62 +79,32 @@
       padding: 240px 34px 34px;
       backdrop-filter: blur(14px);
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       z-index: 1;
-    }
-    .shell::before, .shell::after {
-      content: "";
-      position: absolute;
-      pointer-events: none;
-      mix-blend-mode: screen;
-      animation: pulseA 5.5s ease-in-out infinite alternate;
-    }
-    .shell::before {
-      inset: -35% -35% auto -35%;
-      height: 75%;
-      background: radial-gradient(ellipse at 20% 30%, rgba(147, 0, 6, 0.28), transparent 55%);
-      animation-delay: -2s;
-    }
-    .shell::after {
-      inset: auto -35% -35% -35%;
-      height: 85%;
-      background: radial-gradient(ellipse at 80% 70%, rgba(147, 0, 6, 0.22), transparent 60%);
-      animation: pulseB 6.5s ease-in-out infinite alternate;
-      animation-delay: -3s;
     }
     .logo {
       position: absolute;
-      top: 10px;
+      top: -180px;
       left: 0;
       right: 0;
-      text-align: center;
-      padding: 8px 0;
+      display: flex;
+      justify-content: center;
       pointer-events: none;
-      transform: scale(1.2);
-      z-index: 2;
+      z-index: 10;
+      background: transparent;
+      overflow: visible;
     }
-    .logo::after {
-      content: "";
-      position: absolute;
-      inset: -16px -22px;
-      background: radial-gradient(circle, rgba(147,0,0,0.35) 0%, transparent 60%);
-      filter: blur(22px);
-      z-index: 0;
-      animation: flicker 6s ease-in-out infinite alternate;
-    }
-    .logo img {
-      position: relative;
-      z-index: 1;
-      width: 475px;
-      height: auto;
-      max-width: none;
-      filter:
-        drop-shadow(0 0 18px rgba(147,0,0,0.55))
-        drop-shadow(0 0 28px rgba(147,0,0,0.4))
-        drop-shadow(0 0 38px rgba(147,0,0,0.3));
+    .logo video {
       display: block;
-      margin: 0 auto;
-      animation: flickerSoft 8s ease-in-out infinite alternate;
+      width: 1400px;
+      max-width: 95vw;
+      height: auto;
+      background: transparent !important;
+      background-color: transparent !important;
+      object-fit: contain;
+      pointer-events: none;
+      mix-blend-mode: normal;
+      transform: scale(0.65);
     }
     .hero {
       display: flex;
@@ -395,16 +376,6 @@
     }
     .flex-between { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 
-    @keyframes pulseA {
-      0% { opacity: 0.55; transform: translate(-8px, -6px) scale(1); filter: blur(18px); }
-      50% { opacity: 1; transform: translate(10px, 6px) scale(1.08); }
-      100% { opacity: 0.7; transform: translate(4px, -2px) scale(1.04); }
-    }
-    @keyframes pulseB {
-      0% { opacity: 0.5; transform: translate(6px, 8px) scale(1); filter: blur(22px); }
-      50% { opacity: 1; transform: translate(-8px, -6px) scale(1.08); }
-      100% { opacity: 0.65; transform: translate(3px, 4px) scale(1.04); }
-    }
     @keyframes pulseCard {
       0% { opacity: 0.65; transform: translate(-6px, -3px) scale(1); }
       50% { opacity: 1; transform: translate(4px, 6px) scale(1.03); }
@@ -435,8 +406,9 @@
 </head>
   <body oncontextmenu="return false;">
   <video class="bg-video" autoplay muted loop playsinline>
-    <source src="./BackgroundVideo.mp4" type="video/mp4" />
+    <source src="./BackgroundVideo.webm" type="video/webm" />
   </video>
+  <div class="bg-image"></div>
   <div class="bg-overlay"></div>
   <div id="app"></div>
 
@@ -829,7 +801,9 @@
       return (
         <div className="shell">
           <div className="logo">
-            <img src="./logo.png" alt="WSQK"/>
+            <video autoPlay muted loop playsInline preload="auto">
+              <source src="./logo.webm" type="video/webm;codecs=vp9" />
+            </video>
           </div>
           <div className="hero">
             <div>
