@@ -163,9 +163,27 @@
       margin-top: 20px;
     }
     @media (max-width: 900px) {
-      body { padding: 18px; }
-      .shell { padding: 18px; }
+      body {
+        padding: 18px;
+        display: block;
+        overflow-y: auto;
+      }
+      .shell {
+        padding: 230px 16px 24px;
+        margin: 0 auto 32px;
+      }
       .grid { grid-template-columns: 1fr; }
+      .logo { top: -50px; }
+      .logo video { transform: scale(0.7); }
+    }
+    @media (max-width: 600px) {
+      .shell { padding-top: 260px; }
+      .logo { top: -24px; }
+      .logo video { transform: scale(0.82); max-width: 96vw; }
+      .hero { justify-content: center; }
+      .hero > div:first-child { display: none; }
+      .selector { width: 100%; max-width: 420px; margin: 0 auto; }
+      .realtime-row { margin-top: 32px; }
     }
     .card {
       background: var(--card);
@@ -174,6 +192,14 @@
       padding: 18px;
       position: relative;
       overflow: hidden;
+    }
+    .player-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .player-card > .pill {
+      align-self: flex-start;
     }
     .card::after {
       content: "";
@@ -278,6 +304,33 @@
       align-items: center;
       gap: 12px;
       margin-top: 12px;
+    }
+    .volume-row {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .volume-row label {
+      margin: 0;
+      min-width: 64px;
+    }
+    .volume-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--primary);
+    }
+    .volume-row .tiny {
+      width: 44px;
+      text-align: right;
+    }
+    .realtime-row {
+      margin-top: 16px;
+      display: flex;
+      justify-content: stretch;
+    }
+    .player-card .realtime-row {
+      margin-top: auto;
     }
     button {
       background: rgba(255,255,255,0.08);
@@ -556,11 +609,13 @@
       const [isPlaying, setIsPlaying] = useState(false);
       const [progress, setProgress] = useState(0);
       const [elapsed, setElapsed] = useState("00:00:00");
+      const [volume, setVolume] = useState(1);
       const audioARef = useRef(null);
       const audioBRef = useRef(null);
       const [activeKey, setActiveKey] = useState("A");
       const queuedNextRef = useRef(null);
       const pendingIndexRef = useRef(null);
+      const pendingSeekRef = useRef(null);
       const preloadedKeyRef = useRef(null);
       const switchingRef = useRef(false);
       const friendlyDayLabel = useMemo(() => formatDayMonth(selected.folder), [selected.folder]);
@@ -583,17 +638,6 @@
         }
       }, [currentSlot]);
 
-      useEffect(() => {
-        setCurrentIndex(0);
-        setIsPlaying(false);
-        setProgress(0);
-        if (pendingIndexRef.current !== null) {
-          setCurrentIndex(pendingIndexRef.current);
-          setIsPlaying(true);
-          pendingIndexRef.current = null;
-        }
-      }, [selected.folder, playlist.length]);
-
       const computeNextTarget = () => {
         if (currentIndex + 1 < playlist.length) {
           return { day: selected, index: currentIndex + 1 };
@@ -609,19 +653,41 @@
 
       const getActiveAudio = () => (activeKey === "A" ? audioARef.current : audioBRef.current);
       const getIdleAudio = () => (activeKey === "A" ? audioBRef.current : audioARef.current);
+      const applyPendingSeek = (audio) => {
+        if (!audio) return;
+        const seek = pendingSeekRef.current;
+        if (seek == null) return;
+        const duration = audio.duration;
+        const hasDuration = Number.isFinite(duration) && duration > 0;
+        const safeTarget = hasDuration ? Math.min(Math.max(seek, 0), Math.max(duration - 0.25, 0)) : Math.max(seek, 0);
+        audio.currentTime = safeTarget;
+        if (hasDuration || audio.readyState >= 1) {
+          pendingSeekRef.current = null;
+        }
+      };
 
       useEffect(() => {
-        setCurrentIndex(0);
-        setIsPlaying(false);
-        setProgress(0);
-        setElapsed("00:00:00");
         queuedNextRef.current = null;
-        if (pendingIndexRef.current !== null) {
-          setCurrentIndex(pendingIndexRef.current);
+        const pending = pendingIndexRef.current;
+        if (pending !== null && playlist[pending]) {
+          setCurrentIndex(pending);
           setIsPlaying(true);
           pendingIndexRef.current = null;
+        } else {
+          setCurrentIndex(0);
+          setIsPlaying(false);
         }
+        setProgress(0);
+        setElapsed("00:00:00");
       }, [selected.folder, playlist.length]);
+
+      useEffect(() => {
+        const a = audioARef.current;
+        const b = audioBRef.current;
+        [a, b].forEach((audio) => {
+          if (audio) audio.volume = volume;
+        });
+      }, [volume]);
 
       const loadTrackInto = (audio, target) => {
         if (!audio) return false;
@@ -644,7 +710,7 @@
           loadTrackInto(idle, target);
           idle.pause();
           idle.currentTime = 0;
-          idle.volume = 1;
+          idle.volume = volume;
           preloadedKeyRef.current = activeKey === "A" ? "B" : "A";
         }
       };
@@ -661,14 +727,42 @@
 
       const startNext = (target) => {
         if (!target || switchingRef.current) return;
-        switchingRef.current = true;
+        const crossDay = target.day.folder !== selected.folder;
         const active = getActiveAudio();
         const idle = getIdleAudio();
         const preloadKey = preloadedKeyRef.current;
+
+        // Handle day transition by immediately playing the target while updating state.
+        if (crossDay) {
+          const idleIsPreloaded = idle && preloadKey === (activeKey === "A" ? "B" : "A");
+          if (idleIsPreloaded) {
+            if (active) active.pause();
+            idle.currentTime = 0;
+            idle.volume = volume;
+            idle.play().catch(() => {});
+            setActiveKey(activeKey === "A" ? "B" : "A");
+          } else if (active) {
+            active.pause();
+            loadTrackInto(active, target);
+            active.currentTime = 0;
+            active.volume = volume;
+            active.play().catch(() => {});
+          }
+          queuedNextRef.current = null;
+          preloadedKeyRef.current = null;
+          pendingIndexRef.current = target.index;
+          switchingRef.current = false;
+          setSelected(target.day);
+          setIsPlaying(true);
+          return;
+        }
+
+        switchingRef.current = true;
         if (idle && preloadKey === (activeKey === "A" ? "B" : "A")) {
           loadTrackInto(idle, target);
           if (active) active.pause();
           idle.currentTime = 0;
+          idle.volume = volume;
           idle.play().catch(() => {});
           setActiveKey(activeKey === "A" ? "B" : "A");
         } else {
@@ -676,6 +770,7 @@
             active.pause();
             loadTrackInto(active, target);
             active.currentTime = 0;
+            active.volume = volume;
             active.play().catch(() => {});
           }
         }
@@ -737,6 +832,18 @@
 
       useEffect(() => {
         const audio = getActiveAudio();
+        if (!audio) return;
+        const handleLoaded = () => applyPendingSeek(audio);
+        audio.addEventListener("loadedmetadata", handleLoaded);
+        audio.addEventListener("loadeddata", handleLoaded);
+        return () => {
+          audio.removeEventListener("loadedmetadata", handleLoaded);
+          audio.removeEventListener("loadeddata", handleLoaded);
+        };
+      }, [activeKey, currentIndex]);
+
+      useEffect(() => {
+        const audio = getActiveAudio();
         const track = playlist[currentIndex];
         if (!audio || !track) return;
         const src = `Audio Files/${selected.folder}/${track.file}`;
@@ -745,7 +852,8 @@
           audio.src = src;
           audio.load();
         }
-        audio.volume = 1;
+        audio.volume = volume;
+        applyPendingSeek(audio);
         setProgress(0);
         if (currentSlot) {
           const absoluteSeconds = currentSlot.startMin * 60;
@@ -798,6 +906,40 @@
         }
       };
 
+      const handleRealTime = () => {
+        if (!hasTracks) return;
+        const now = new Date();
+        const minutesNow = now.getHours() * 60 + now.getMinutes();
+        const slot = schedule.find((s) => minutesNow >= s.startMin && minutesNow < s.endMin);
+        if (!slot) {
+          alert("Timeslot not available for the current time.");
+          return;
+        }
+        const slotIdx = schedule.findIndex((s) => s === slot);
+        const targetIndex = playlist.findIndex((track, idx) => {
+          const num = extractNum(track.file || track.title);
+          if (num && slot.num) return num === slot.num;
+          return idx === slotIdx;
+        });
+        if (targetIndex === -1) {
+          alert("Timeslot not available for the current time.");
+          return;
+        }
+        const secondsIntoDay = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+        const slotStartSeconds = slot.startMin * 60;
+        const offsetSeconds = Math.max(0, secondsIntoDay - slotStartSeconds);
+        pendingSeekRef.current = offsetSeconds;
+        if (targetIndex === currentIndex) {
+          const audio = getActiveAudio();
+          applyPendingSeek(audio);
+          if (audio) audio.play().catch(() => {});
+          setIsPlaying(true);
+          return;
+        }
+        setCurrentIndex(targetIndex);
+        setIsPlaying(true);
+      };
+
       return (
         <div className="shell">
           <div className="logo">
@@ -840,7 +982,7 @@
           </div>
 
           <div className="grid">
-            <div className="card">
+              <div className="card player-card">
               <div className="pill">
                 <span className={`status-light ${isPlaying ? "status-on" : "status-off"}`}></span>
                 {isPlaying ? "On Air" : "Off Air"}
@@ -866,8 +1008,24 @@
                 </button>
                 <button className="ghost" onClick={handleNext} disabled={!hasTracks}>Next &gt;</button>
               </div>
+              <div className="volume-row">
+                <label htmlFor="volume">Volume</label>
+                <input
+                  id="volume"
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={volume}
+                  onChange={(e) => setVolume(parseFloat(e.target.value))}
+                />
+                <div className="tiny">{Math.round(volume * 100)}%</div>
+              </div>
               <audio ref={audioARef} />
               <audio ref={audioBRef} />
+              <div className="realtime-row">
+                <button className="primary" style={{ width: "100%" }} onClick={handleRealTime} disabled={!hasTracks}>Real Time</button>
+              </div>
             </div>
 
             <div className="card">

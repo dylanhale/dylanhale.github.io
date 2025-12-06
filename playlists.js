@@ -361,6 +361,10 @@ window.PLAYLISTS = {
   ],
   "12-5-25": [
     {
+      "file": "001 - The Late Night Crew with Vance Goodman.m4a",
+      "title": "001 - The Late Night Crew with Vance Goodman"
+    },
+    {
       "file": "003 - The WSQK Wake Up with Vance Goodman.m4a",
       "title": "003 - The WSQK Wake Up with Vance Goodman"
     },
@@ -387,6 +391,18 @@ window.PLAYLISTS = {
     {
       "file": "009 - The Hawkins Homerun with Mindy Flare.m4a",
       "title": "009 - The Hawkins Homerun with Mindy Flare"
+    },
+    {
+      "file": "010 - Dial-A-Dedication with Vance Goodman.m4a",
+      "title": "010 - Dial-A-Dedication with Vance Goodman"
+    },
+    {
+      "file": "011 - Evenings with Vance Goodman On WSQK.m4a",
+      "title": "011 - Evenings with Vance Goodman On WSQK"
+    },
+    {
+      "file": "012 - Late Nights with Mindy Flare on WSQK.m4a",
+      "title": "012 - Late Nights with Mindy Flare on WSQK"
     }
   ],
   "12-6-25": [],
