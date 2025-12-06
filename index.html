@@ -306,11 +306,11 @@
       margin-top: 12px;
     }
     .volume-row {
-      margin-top: 12px;
+      margin-top: 40px;
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 35px;
     }
     .volume-row label {
       margin: 0;
@@ -325,7 +325,7 @@
       text-align: right;
     }
     .realtime-row {
-      margin-top: 16px;
+      margin-top: 0;
       display: flex;
       justify-content: stretch;
     }
@@ -483,6 +483,33 @@
       { label: "12/02", folder: "12-2-25" },
       { label: "12/03", folder: "12-3-25" },
       { label: "12/04", folder: "12-4-25" },
+      { label: "12/05", folder: "12-5-25" },
+      { label: "12/06", folder: "12-6-25" },
+      { label: "12/07", folder: "12-7-25" },
+      { label: "12/08", folder: "12-8-25" },
+      { label: "12/09", folder: "12-9-25" },
+      { label: "12/10", folder: "12-10-25" },
+      { label: "12/11", folder: "12-11-25" },
+      { label: "12/12", folder: "12-12-25" },
+      { label: "12/13", folder: "12-13-25" },
+      { label: "12/14", folder: "12-14-25" },
+      { label: "12/15", folder: "12-15-25" },
+      { label: "12/16", folder: "12-16-25" },
+      { label: "12/17", folder: "12-17-25" },
+      { label: "12/18", folder: "12-18-25" },
+      { label: "12/19", folder: "12-19-25" },
+      { label: "12/20", folder: "12-20-25" },
+      { label: "12/21", folder: "12-21-25" },
+      { label: "12/22", folder: "12-22-25" },
+      { label: "12/23", folder: "12-23-25" },
+      { label: "12/24", folder: "12-24-25" },
+      { label: "12/25", folder: "12-25-25" },
+      { label: "12/26", folder: "12-26-25" },
+      { label: "12/27", folder: "12-27-25" },
+      { label: "12/28", folder: "12-28-25" },
+      { label: "12/29", folder: "12-29-25" },
+      { label: "12/30", folder: "12-30-25" },
+      { label: "12/31", folder: "12-31-25" },
     ];
 
     const manifestUrl = "./playlists.json";
@@ -505,11 +532,15 @@
       return `${String(m).padStart(2, "0")}/${String(d).padStart(2, "0")}`;
     };
 
-    const weekendFolders = new Set(["11-29-25", "11-30-25"]);
+    const weekendFolders = new Set([
+      "11-29-25", "11-30-25",
+      "12-6-25", "12-7-25",
+      "12-13-25", "12-14-25",
+      "12-20-25", "12-21-25",
+      "12-27-25", "12-28-25",
+    ]);
 
-    const weekdaySlots = [
-      { num: "001", label: "12a-3a", startMin: 0, endMin: 180 },
-      { num: "002", label: "3a-6a", startMin: 180, endMin: 360 },
+    const weekdaySlotsBase = [
       { num: "003", label: "6a-9a", startMin: 360, endMin: 540 },
       { num: "004", label: "9a-10a", startMin: 540, endMin: 600 },
       { num: "005", label: "10a-12p", startMin: 600, endMin: 720 },
@@ -520,11 +551,11 @@
       { num: "010", label: "7p-8p", startMin: 1140, endMin: 1200 },
       { num: "011", label: "8p-9p", startMin: 1200, endMin: 1260 },
       { num: "012", label: "9p-12a", startMin: 1260, endMin: 1440 },
-    ];
-
-    const weekendSlots = [
       { num: "001", label: "12a-3a", startMin: 0, endMin: 180 },
       { num: "002", label: "3a-6a", startMin: 180, endMin: 360 },
+    ];
+
+    const weekendSlotsBase = [
       { num: "003", label: "6a-9a", startMin: 360, endMin: 540 },
       { num: "004", label: "9a-10a", startMin: 540, endMin: 600 },
       { num: "005", label: "10a-12p", startMin: 600, endMin: 720 },
@@ -533,6 +564,8 @@
       { num: "008", label: "7p-8p", startMin: 1140, endMin: 1200 },
       { num: "009", label: "8p-9p", startMin: 1200, endMin: 1260 },
       { num: "010", label: "9p-12a", startMin: 1260, endMin: 1440 },
+      { num: "001", label: "12a-3a", startMin: 0, endMin: 180 },
+      { num: "002", label: "3a-6a", startMin: 180, endMin: 360 },
     ];
 
     const stripTitle = (name) => (name || "").replace(/^\d+\s*[-.]?\s*/, "").trim();
@@ -618,12 +651,61 @@
       const pendingSeekRef = useRef(null);
       const preloadedKeyRef = useRef(null);
       const switchingRef = useRef(false);
+      const pendingPlayRef = useRef(false);
+      const intendedPlayRef = useRef(false);
       const friendlyDayLabel = useMemo(() => formatDayMonth(selected.folder), [selected.folder]);
 
-      const isWeekend = weekendFolders.has(selected.folder);
-      const schedule = useMemo(() => (isWeekend ? weekendSlots : weekdaySlots), [isWeekend]);
+      const isNewCycleDay = (folder) => {
+        const [m, d, y] = folder.split("-");
+        const date = new Date(2000 + parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
+        return date >= new Date(2025, 11, 6); // Dec 6, 2025 and later
+      };
 
-      const playlist = manifest[selected.folder] || [];
+      const weekdayMapNew = {
+        "003": "001", "004": "002", "005": "003", "006": "004", "007": "005", "008": "006", "009": "007", "010": "008", "011": "009", "012": "010", "001": "011", "002": "012",
+      };
+      const weekendMapNew = {
+        "003": "001", "004": "002", "005": "003", "006": "004", "007": "005", "008": "006", "009": "007", "010": "008", "001": "009", "002": "010",
+      };
+
+      const mapSlotNumberForDay = (num, folder) => {
+        if (!isNewCycleDay(folder)) return num;
+        const table = weekendFolders.has(folder) ? weekendMapNew : weekdayMapNew;
+        return table[num] || num;
+      };
+
+      const getScheduleForDay = (folder) => {
+        const base = weekendFolders.has(folder) ? weekendSlotsBase : weekdaySlotsBase;
+        return base.map((slot) => ({ ...slot, num: mapSlotNumberForDay(slot.num, folder) }));
+      };
+
+      const schedule = useMemo(() => getScheduleForDay(selected.folder), [selected.folder]);
+
+      const sortTracksForSchedule = (tracks, scheduleForDay) => {
+        const orderMap = new Map(scheduleForDay.map((s, idx) => [s.num, idx]));
+        return tracks
+          .map((track, idx) => ({ track, idx }))
+          .sort((a, b) => {
+            const numA = extractNum(a.track.file || a.track.title);
+            const numB = extractNum(b.track.file || b.track.title);
+            const priA = orderMap.has(numA) ? orderMap.get(numA) : scheduleForDay.length + a.idx;
+            const priB = orderMap.has(numB) ? orderMap.get(numB) : scheduleForDay.length + b.idx;
+            if (priA !== priB) return priA - priB;
+            return a.idx - b.idx;
+          })
+          .map((entry) => entry.track);
+      };
+      const getSortedTracksForDay = (day) => {
+        const base = manifest[day.folder] || [];
+        const scheduleForDay = getScheduleForDay(day.folder);
+        return sortTracksForSchedule(base, scheduleForDay);
+      };
+
+      const rawPlaylist = manifest[selected.folder] || [];
+      const playlist = useMemo(
+        () => sortTracksForSchedule(rawPlaylist, schedule),
+        [rawPlaylist, schedule]
+      );
       const currentTrack = playlist[currentIndex] || null;
 
       const currentSlot = useMemo(() => {
@@ -645,7 +727,7 @@
         const dayIdx = dateOptions.findIndex((d) => d.folder === selected.folder);
         for (let offset = 1; offset <= dateOptions.length; offset++) {
           const nextDay = dateOptions[(dayIdx + offset) % dateOptions.length];
-          const tracks = manifest[nextDay.folder] || [];
+          const tracks = getSortedTracksForDay(nextDay);
           if (tracks.length > 0) return { day: nextDay, index: 0 };
         }
         return null;
@@ -669,16 +751,19 @@
       useEffect(() => {
         queuedNextRef.current = null;
         const pending = pendingIndexRef.current;
-        if (pending !== null && playlist[pending]) {
+        const tracks = getSortedTracksForDay(selected);
+        const shouldPlay = pendingPlayRef.current || intendedPlayRef.current;
+        if (pending !== null && tracks[pending]) {
           setCurrentIndex(pending);
           setIsPlaying(true);
           pendingIndexRef.current = null;
         } else {
           setCurrentIndex(0);
-          setIsPlaying(false);
+          setIsPlaying(shouldPlay && tracks.length > 0);
         }
         setProgress(0);
         setElapsed("00:00:00");
+        pendingPlayRef.current = false;
       }, [selected.folder, playlist.length]);
 
       useEffect(() => {
@@ -691,7 +776,7 @@
 
       const loadTrackInto = (audio, target) => {
         if (!audio) return false;
-        const tracks = manifest[target.day.folder] || [];
+        const tracks = getSortedTracksForDay(target.day);
         const track = tracks[target.index];
         if (!track) return false;
         const src = `Audio Files/${target.day.folder}/${track.file}`;
@@ -723,6 +808,7 @@
           setCurrentIndex(target.index);
         }
         setIsPlaying(true);
+        intendedPlayRef.current = true;
       };
 
       const startNext = (target) => {
@@ -748,9 +834,11 @@
             active.volume = volume;
             active.play().catch(() => {});
           }
+          intendedPlayRef.current = true;
           queuedNextRef.current = null;
           preloadedKeyRef.current = null;
           pendingIndexRef.current = target.index;
+          pendingPlayRef.current = true;
           switchingRef.current = false;
           setSelected(target.day);
           setIsPlaying(true);
@@ -764,6 +852,7 @@
           idle.currentTime = 0;
           idle.volume = volume;
           idle.play().catch(() => {});
+          intendedPlayRef.current = true;
           setActiveKey(activeKey === "A" ? "B" : "A");
         } else {
           if (active) {
@@ -772,6 +861,7 @@
             active.currentTime = 0;
             active.volume = volume;
             active.play().catch(() => {});
+            intendedPlayRef.current = true;
           }
         }
         queuedNextRef.current = null;
@@ -804,12 +894,12 @@
             const next = computeNextTarget();
             if (next) queueNext(next);
           }
-          const target = queuedNextRef.current || computeNextTarget();
-          if (target && remainingAudio <= 0.5) {
-            startNext(target);
-          }
-          if (remainingSlot > 120) {
-            queuedNextRef.current = null;
+        const target = queuedNextRef.current || computeNextTarget();
+        if (target && remainingAudio <= 0.5) {
+          startNext(target);
+        }
+        if (remainingSlot > 120) {
+          queuedNextRef.current = null;
           }
         };
 
@@ -819,6 +909,7 @@
             startNext(target);
           } else {
             setIsPlaying(false);
+            intendedPlayRef.current = false;
           }
         };
 
@@ -862,7 +953,9 @@
           setElapsed("00:00:00");
         }
         if (isPlaying) {
-          audio.play().catch(() => setIsPlaying(false));
+          audio.play().catch(() => {
+            if (!intendedPlayRef.current) setIsPlaying(false);
+          });
         }
         // reset preload indicator
         preloadedKeyRef.current = null;
@@ -876,19 +969,28 @@
         if (isPlaying) {
           audio.pause();
           setIsPlaying(false);
+          intendedPlayRef.current = false;
         } else {
-          audio.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+          audio.play().then(() => {
+            setIsPlaying(true);
+            intendedPlayRef.current = true;
+          }).catch(() => {
+            if (!intendedPlayRef.current) setIsPlaying(false);
+            intendedPlayRef.current = false;
+          });
         }
       };
 
       const handleNext = () => {
         const target = computeNextTarget();
         if (target) startNext(target, true);
+        intendedPlayRef.current = true;
       };
 
       const handlePrev = () => {
         if (!hasTracks) return;
         setCurrentIndex((idx) => (idx - 1 + playlist.length) % playlist.length);
+        intendedPlayRef.current = true;
       };
 
       const handleSeek = (e) => {
@@ -903,6 +1005,7 @@
           audio.currentTime = Math.max(0, safeTarget);
           audio.play().catch(() => {});
           setIsPlaying(true);
+          intendedPlayRef.current = true;
         }
       };
 
@@ -912,7 +1015,7 @@
         const minutesNow = now.getHours() * 60 + now.getMinutes();
         const slot = schedule.find((s) => minutesNow >= s.startMin && minutesNow < s.endMin);
         if (!slot) {
-          alert("Timeslot not available for the current time.");
+          alert("Timeslot not available for the current date.");
           return;
         }
         const slotIdx = schedule.findIndex((s) => s === slot);
@@ -922,7 +1025,7 @@
           return idx === slotIdx;
         });
         if (targetIndex === -1) {
-          alert("Timeslot not available for the current time.");
+          alert("Timeslot not available for the current date.");
           return;
         }
         const secondsIntoDay = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -934,10 +1037,12 @@
           applyPendingSeek(audio);
           if (audio) audio.play().catch(() => {});
           setIsPlaying(true);
+          intendedPlayRef.current = true;
           return;
         }
         setCurrentIndex(targetIndex);
         setIsPlaying(true);
+        intendedPlayRef.current = true;
       };
 
       return (
@@ -1051,6 +1156,7 @@
                       onClick={() => {
                         setCurrentIndex(idx);
                         setIsPlaying(true);
+                        intendedPlayRef.current = true;
                       }}
                     >
                       <div className="badge">{slot ? expandLabel(slot.label) : num}</div>

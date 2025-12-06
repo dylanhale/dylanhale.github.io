@@ -365,6 +365,10 @@ window.PLAYLISTS = {
       "title": "001 - The Late Night Crew with Vance Goodman"
     },
     {
+      "file": "002 - Mindy's Weekend Early Risers.m4a",
+      "title": "002 - Mindy's Weekend Early Risers"
+    },
+    {
       "file": "003 - The WSQK Wake Up with Vance Goodman.m4a",
       "title": "003 - The WSQK Wake Up with Vance Goodman"
     },
@@ -405,7 +409,24 @@ window.PLAYLISTS = {
       "title": "012 - Late Nights with Mindy Flare on WSQK"
     }
   ],
-  "12-6-25": [],
+  "12-6-25": [
+    {
+      "file": "001 - The Weekend Wake Up with Vance Goodman.m4a",
+      "title": "001 - The Weekend Wake Up with Vance Goodman"
+    },
+    {
+      "file": "002 - The Rewind At 9 With Mindy Flare On WSQK.m4a",
+      "title": "002 - The Rewind At 9 With Mindy Flare On WSQK"
+    },
+    {
+      "file": "003 - Mindy Flare in the Mornings.m4a",
+      "title": "003 - Mindy Flare in the Mornings"
+    },
+    {
+      "file": "004 - The Afternoon Hangout with Vance Goodman.m4a",
+      "title": "004 - The Afternoon Hangout with Vance Goodman"
+    }
+  ],
   "12-7-25": [],
   "12-8-25": [],
   "12-9-25": [],
