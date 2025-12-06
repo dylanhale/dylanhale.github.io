@@ -1,6 +1,6 @@
 Web version is at https://dylanhale.github.io
 
-Web version is currently lagging and has some visual artifacting issues.
+If lag persists on web version ensure Hardware/Graphics Acceleration is on.
 For best experience, either download the zip of the repo or git checkout the repo and run index.html locally
 
 WSQK: The Squawk - Hawkins Radio Station
@@ -30,5 +30,5 @@ December 3rd - Fully archived
 
 December 4th - Fully archived
 
-December 5th - Partially archived
+December 5th - Fully archived
 
