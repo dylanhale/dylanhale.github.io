@@ -934,6 +934,16 @@
       }, [isPlaying]);
 
       useEffect(() => {
+        if (isPlaying || !intendedPlayRef.current || !hasTracks) return;
+        const t = setTimeout(() => {
+          if (!isPlaying && intendedPlayRef.current) {
+            setShowStartPrompt(true);
+          }
+        }, 1800);
+        return () => clearTimeout(t);
+      }, [isPlaying, hasTracks, selected.folder]);
+
+      useEffect(() => {
         if (!isPlaying || !autoPlayUnlockedRef.current) return;
         if (!autoUnmuteRef.current) return;
         const unmuteTimer = setTimeout(() => {
@@ -976,14 +986,15 @@
         if (!intendedPlayRef.current) return;
         if (autoRetryRef.current.timer) clearInterval(autoRetryRef.current.timer);
         autoRetryRef.current.attempts = 0;
-          autoRetryRef.current.timer = setInterval(() => {
-            autoRetryRef.current.attempts += 1;
-            if (isPlaying || autoRetryRef.current.attempts > 10) {
-              clearInterval(autoRetryRef.current.timer);
-              autoRetryRef.current.timer = null;
-              return;
-            }
-            ensurePlayback();
+        autoRetryRef.current.timer = setInterval(() => {
+          autoRetryRef.current.attempts += 1;
+          if (isPlaying || autoRetryRef.current.attempts > 10) {
+            if (!isPlaying) setShowStartPrompt(true);
+            clearInterval(autoRetryRef.current.timer);
+            autoRetryRef.current.timer = null;
+            return;
+          }
+          ensurePlayback();
             if (!isPlaying) handlePlayPause();
           }, 600);
           return () => {
